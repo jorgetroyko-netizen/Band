@@ -60,6 +60,11 @@ main{padding-block:14px 96px}
 .btn.on{border-color:var(--accent);color:var(--accent)}
 .btn.danger{border-color:var(--danger);color:var(--danger)}
 .btn.block{width:100%}
+.btn.icon{width:44px;padding:0;font-size:24px;line-height:1}
+.field textarea{width:100%;min-height:130px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font:inherit;color:inherit;resize:vertical}
+.pv{display:flex;flex-direction:column;gap:6px;font-size:14px}
+.pv small{color:var(--muted)}
+.pv .dup{color:var(--muted);text-decoration:line-through}
 .btn[disabled]{opacity:.5}
 .link{color:var(--accent);font-weight:600;padding:8px 0}
 
@@ -142,9 +147,10 @@ main{padding-block:14px 96px}
 .setlist li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 10px 10px 8px}
 .setlist li+li{border-top:1px solid var(--line)}
 .setlist .n{font-family:var(--f-display);font-weight:700;font-size:22px;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
-.sl-main{display:flex;flex-direction:column;min-width:0}
+.sl-main{display:flex;flex-direction:column;min-width:0;gap:1px}
+.sl-main .tags{margin-top:5px}
 .sl-main b{font-weight:600;overflow-wrap:anywhere}
-.sl-main span{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.sl-main .sub{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
 .sl-info{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
 .sl-ctl{display:flex}
 .sl-ctl button{width:38px;height:40px;display:grid;place-items:center;font-size:18px;color:var(--muted)}
@@ -430,6 +436,11 @@ function tagsHTML(s){
   if(s.genre)h+='<span class="tag">'+esc(s.genre)+'</span>';
   return h;
 }
+function showTags(s){
+  return (s.key?'<span class="tag key">'+esc(s.key)+'</span>':'<span class="tag empty">tom</span>')+
+    (VOICE[s.voice]?'<span class="tag">'+VOICE[s.voice]+'</span>':'<span class="tag empty">voz</span>')+
+    ((+s.bpm>0)?'<span class="tag mono">'+(+s.bpm)+' bpm</span>':'<span class="tag empty">bpm</span>');
+}
 function starsHTML(id,my,big){
   var h='<div class="stars'+(big?' big':'')+'" role="group" aria-label="Meu voto">';
   h+='<button class="zero'+(my===0?' on':'')+'" data-act="vote" data-id="'+id+'" data-n="0" aria-label="Zero estrelas" aria-pressed="'+(my===0)+'"><span>0</span></button>';
@@ -482,7 +493,8 @@ function mountLib(){
   $('#view').innerHTML=
     '<div class="tools"><label class="search"><span class="sr">Buscar música ou artista</span>'+
     '<input id="q" type="search" placeholder="Buscar música ou artista" autocomplete="off" enterkeyhint="search"></label>'+
-    '<button class="btn" id="btn-filters" data-act="toggle-filters">Filtros</button></div>'+
+    '<button class="btn" id="btn-filters" data-act="toggle-filters">Filtros</button>'+
+    '<button class="btn icon" data-act="add-open" aria-label="Adicionar músicas">+</button></div>'+
     '<div id="filters" hidden></div>'+
     '<div class="meta"><span id="count"></span><span class="seg" role="group" aria-label="Ordenar por">'+
     '<button data-act="sort" data-v="title">Música</button><button data-act="sort" data-v="artist">Artista</button></span></div>'+
@@ -637,12 +649,10 @@ function setDetailHTML(id){
         right='<span class="sl-ctl"><button data-act="mv" data-id="'+sid+'" data-d="-1" aria-label="Subir"'+(i===0?' disabled':'')+'>▲</button>'+
           '<button data-act="mv" data-id="'+sid+'" data-d="1" aria-label="Descer"'+(i===ids.length-1?' disabled':'')+'>▼</button>'+
           '<button class="rm" data-act="rm" data-id="'+sid+'" aria-label="Tirar do repertório">✕</button></span>';
-      }else{
-        right='<span class="sl-info">'+(s.key?'<span class="tag key">'+esc(s.key)+'</span>':'<span class="tag empty">tom</span>')+
-          ((+s.bpm>0)?'<span class="tag mono">'+(+s.bpm)+'</span>':'')+'</span>';
-      }
-      return '<li><span class="n">'+(i+1)+'</span><span class="sl-main"><b>'+esc(s.title)+'</b><span>'+esc(s.artist)+(VOICE[s.voice]?' · '+VOICE[s.voice]:'')+'</span></span>'+right+'</li>';
-    }).join('')+'</ol>';
+      }else right='';
+      return '<li><span class="n">'+(i+1)+'</span><button class="sl-main" data-act="open-song" data-id="'+sid+'"><b>'+esc(s.title)+'</b>'+
+        '<span class="sub">'+esc(s.artist)+'</span><span class="tags">'+showTags(s)+'</span></button>'+right+'</li>';
+    }).join('')+'</ol><p class="note">Toque numa música para definir tom, voz e BPM.</p>';
   }else{
     h+='<div class="empty"><b>Este repertório está vazio.</b><span>Toque em Adicionar músicas. As mais votadas aparecem primeiro.</span></div>';
   }
@@ -667,6 +677,16 @@ function refreshSheet(force){
     var panel=$('.panel',el),top=panel?panel.scrollTop:0;
     el.innerHTML=songSheetHTML(S.sheet.id);el.hidden=false;
     panel=$('.panel',el);if(panel)panel.scrollTop=top;
+  }else if(S.sheet.type==='add'){
+    if(!S.sheet.built){
+      el.innerHTML='<div class="panel" role="dialog" aria-modal="true" aria-label="Adicionar músicas"><div class="sheet-head"><div><h2>Adicionar músicas</h2>'+
+        '<p>Uma por linha: Música - Artista. Pode colar várias de uma vez.</p></div>'+
+        '<button class="x" data-act="close-sheet" aria-label="Fechar">✕</button></div>'+
+        '<label class="field"><span>Lista</span><textarea id="add-text" rows="6" spellcheck="false" placeholder="Evidências - Chitãozinho &amp; Xororó&#10;Hotel California - Eagles (Bm)"></textarea></label>'+
+        '<div id="add-opts" class="sec"></div><div id="add-preview" class="sec"></div></div>';
+      el.hidden=false;S.sheet.built=true;
+    }
+    renderAdd();
   }else{
     var set=S.sets[S.sheet.setId];
     if(!set){closeSheet();return}
@@ -689,17 +709,68 @@ function refreshSheet(force){
     $('#plist').innerHTML=rows.length?rows.map(function(r){
       var s=S.songs[r.id],on=!!inSet[r.id];
       return '<button class="prow'+(on?' in':'')+'" data-act="pick" data-id="'+r.id+'" aria-pressed="'+on+'"><span class="ck" aria-hidden="true">✓</span>'+
-        '<span class="rmain"><span class="s-title">'+esc(s.title)+'</span><span class="s-artist">'+esc(s.artist)+(s.key?' · '+esc(s.key):'')+'</span></span>'+
+        '<span class="rmain"><span class="s-title">'+esc(s.title)+'</span><span class="s-artist">'+esc(s.artist)+(s.key?' · '+esc(s.key):'')+(VOICE[s.voice]?' · '+VOICE[s.voice]:'')+((+s.bpm>0)?' · '+(+s.bpm)+' bpm':'')+'</span></span>'+
         '<span class="ptot">'+r.total+STAR+'</span></button>';
     }).join(''):'<div class="empty">Nenhuma música com essa busca.</div>';
   }
+}
+function parseLines(text){
+  var out=[];
+  String(text||'').split(/\n+/).forEach(function(l){
+    l=l.trim().replace(/^[-•*]\s+/,'').replace(/^\d+[.)]\s+/,'');
+    if(!l)return;
+    var o={title:'',artist:'',key:'',origin:'',genre:''};
+    if(l.indexOf('|')>=0){
+      var p=l.split('|').map(function(x){return x.trim()});
+      o.title=p[0]||'';o.artist=p[1]||'';
+      p.slice(2).forEach(function(x){
+        if(/^nac/i.test(x))o.origin='Nac';
+        else if(/^int/i.test(x))o.origin='Int';
+        else if(/^[A-G][#b]?m?$/.test(x))o.key=x;
+        else GENRES.forEach(function(g){if(norm(g)===norm(x))o.genre=g});
+      });
+    }else{
+      var m=/\(([A-G][#b]?m?)\)\s*$/.exec(l);
+      if(m){o.key=m[1];l=l.slice(0,m.index).trim()}
+      var i=l.search(/\s[-–—]\s/);
+      if(i>=0){o.title=l.slice(0,i).trim();o.artist=l.slice(i).replace(/^\s[-–—]\s/,'').trim()}else o.title=l;
+    }
+    if(o.title)out.push(o);
+  });
+  return out;
+}
+function addItems(){
+  var seen={},t=$('#add-text');
+  songIds().forEach(function(id){var s=S.songs[id];seen[norm(s.title)+'|'+norm(s.artist)]=true});
+  return parseLines(t?t.value:'').map(function(o){
+    var k=norm(o.title)+'|'+norm(o.artist);o.dup=!!seen[k];seen[k]=true;return o;
+  });
+}
+function renderAdd(){
+  var sh=S.sheet,box=$('#add-opts'),pv=$('#add-preview');
+  if(!sh||sh.type!=='add'||!box||!pv)return;
+  box.innerHTML='<h3>Origem e gênero desta lista</h3><div class="grid2">'+
+    pickBtn('add-origin','Nac','Nacional',sh.origin==='Nac',' txt')+pickBtn('add-origin','Int','Internacional',sh.origin==='Int',' txt')+'</div>'+
+    '<div class="chips">'+GENRES.map(function(g){
+      return '<button class="chip'+(sh.genre===g?' on':'')+'" data-act="add-genre" data-v="'+esc(g)+'" aria-pressed="'+(sh.genre===g)+'">'+esc(g)+'</button>';
+    }).join('')+'</div>';
+  var items=addItems(),ok=items.filter(function(o){return !o.dup}),h='';
+  if(items.length){
+    h+='<h3>Conferência</h3><div class="pv">'+items.map(function(o){
+      return '<div'+(o.dup?' class="dup"':'')+'><b>'+esc(o.title)+'</b>'+(o.artist?' · '+esc(o.artist):' <small>(sem artista)</small>')+
+        (o.key?' · '+esc(o.key):'')+(o.dup?' <small>já está na biblioteca</small>':'')+'</div>';
+    }).join('')+'</div>';
+  }
+  h+='<button class="btn primary block" data-act="add-save"'+(ok.length?'':' disabled')+'>'+
+    (ok.length?'Adicionar '+ok.length+(ok.length===1?' música':' músicas'):'Adicionar')+'</button>';
+  pv.innerHTML=h;
 }
 function pickBtn(act,v,label,on,extra){
   return '<button class="pick'+(on?' on':'')+(extra||'')+'" data-act="'+act+'" data-v="'+esc(v)+'" aria-pressed="'+!!on+'">'+esc(label)+'</button>';
 }
 function songSheetHTML(id){
   var s=S.songs[id],k=parseKey(s.key),ro=S.readOnly?' disabled':'';
-  var h='<div class="panel" role="dialog" aria-modal="true" aria-label="'+esc(s.title)+'"><div class="sheet-head"><div><h2>'+esc(s.title)+'</h2><p>'+esc(s.artist)+'</p></div>'+
+  var h='<div class="panel" role="dialog" aria-modal="true" aria-label="'+esc(s.title)+'"><div class="sheet-head"><div><h2>'+esc(s.title)+'</h2><p>'+esc(s.artist)+(memberName(s.by)?' · adicionada por '+esc(memberName(s.by)):'')+'</p></div>'+
     '<button class="x" data-act="close-sheet" aria-label="Fechar">✕</button></div>';
   h+='<section class="sec"><h3>Votos</h3>';
   MEMBERS.forEach(function(m){
@@ -725,6 +796,12 @@ function songSheetHTML(id){
   h+='<section class="sec"><h3>Duração</h3><div class="stepper three"><button class="pick" data-act="dur-step" data-d="-15">−15 s</button>'+
     '<output>'+((+s.dur>0)?fmtDur(+s.dur):'–')+'</output><button class="pick" data-act="dur-step" data-d="15">+15 s</button></div>'+
     ((+s.dur>0)?'<button class="link" data-act="dur-clear">Tirar a duração</button>':'')+'</section>';
+  if(S.me==='jorge'){
+    h+=S.sheet.confirmRm?
+      '<div class="form"><b>Tirar esta música da biblioteca?</b><span>Ela sai também dos repertórios e do ranking.</span><div class="row">'+
+      '<button class="btn" data-act="rm-song-cancel">Cancelar</button><button class="btn danger" data-act="rm-song">Tirar</button></div></div>':
+      '<button class="btn block danger" data-act="rm-song-ask">Tirar da biblioteca</button>';
+  }
   return h+'</div>';
 }
 
@@ -807,6 +884,23 @@ var ACT={
     patchDoc('votes/'+S.me,{v:o},350);
   },
   'open-song':function(d){if(S.songs[d.id])openSheet({type:'song',id:d.id})},
+  'add-open':function(){if(!guard())return;openSheet({type:'add',origin:'',genre:'',built:false})},
+  'add-origin':function(d){S.sheet.origin=S.sheet.origin===d.v?'':d.v;renderAdd()},
+  'add-genre':function(d){S.sheet.genre=S.sheet.genre===d.v?'':d.v;renderAdd()},
+  'add-save':function(){
+    if(!guard())return;
+    var sh=S.sheet,ok=addItems().filter(function(o){return !o.dup}),batch={},stamp=Date.now().toString(36);
+    if(!ok.length)return;
+    ok.forEach(function(o,i){
+      batch['n'+stamp+i]={title:o.title,artist:o.artist,origin:o.origin||sh.origin||'',genre:o.genre||sh.genre||'',key:o.key||'',bpm:0,voice:'',dur:0,by:S.me};
+    });
+    closeSheet();
+    patchDoc('lib/songs',{songs:batch},0);
+    toast(ok.length===1?'1 música adicionada.':ok.length+' músicas adicionadas.');
+  },
+  'rm-song-ask':function(){S.sheet.confirmRm=true;refreshSheet(true)},
+  'rm-song-cancel':function(){S.sheet.confirmRm=false;refreshSheet(true)},
+  'rm-song':function(){if(!guard())return;var id=S.sheet.id;closeSheet();patchSong(id,{removed:true},0);toast('Música tirada da biblioteca.')},
   'close-sheet':function(){closeSheet()},
   'key-note':function(d){if(!guard())return;var id=S.sheet.id,k=parseKey(S.songs[id].key);patchSong(id,{key:d.v+k.mode});refreshSheet(true)},
   'key-acc':function(d){
@@ -899,6 +993,7 @@ document.addEventListener('input',function(e){
   var t=e.target;
   if(t.id==='q'){S.q=t.value;S.stick={};refreshLib()}
   else if(t.id==='pq'&&S.sheet&&S.sheet.type==='picker'){S.sheet.q=t.value;refreshSheet(false)}
+  else if(t.id==='add-text'){renderAdd()}
   else if(t.id==='bpm-input'&&S.sheet&&S.sheet.type==='song'){
     if(S.readOnly||!S.db)return;
     var raw_=t.value.replace(/\D/g,'');if(raw_!==t.value)t.value=raw_;

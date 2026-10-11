@@ -1,0 +1,926 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Repertório da Banda</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}img{max-width:100%}[hidden]{display:none!important}
+/* Layout: one phone-width column. Sticky header, fixed bottom tabs, song cards instead of table columns, bottom sheets for editing. */
+:root{
+  --bg:#ECEFF2; --surface:#FFFFFF; --ink:#141922; --muted:#5A6473; --line:#D2D8E0; --chip:#E3E8EE;
+  --accent:#C81E66; --on-accent:#FFFFFF; --star:#D99100; --danger:#B3261E; --scrim:rgba(20,25,34,.55);
+  --f-display:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10141A; --surface:#1A2029; --ink:#EEF1F5; --muted:#9BA5B3; --line:#2C3440; --chip:#262E3A;
+    --accent:#FF5C9D; --on-accent:#1C0410; --star:#FFC53D; --danger:#FF8A80; --scrim:rgba(0,0,0,.65);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10141A; --surface:#1A2029; --ink:#EEF1F5; --muted:#9BA5B3; --line:#2C3440; --chip:#262E3A;
+  --accent:#FF5C9D; --on-accent:#1C0410; --star:#FFC53D; --danger:#FF8A80; --scrim:rgba(0,0,0,.65);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.35;-webkit-text-size-adjust:100%}
+html.locked,html.locked body{overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:inherit;-webkit-tap-highlight-color:transparent}
+input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,p,ol{margin:0;padding:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.wrap{max-width:640px;margin-inline:auto;padding-inline:16px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px}
+.brand{font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.04em;text-transform:uppercase}
+.whobtn{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-weight:600;font-size:14px}
+.whobtn small{color:var(--muted);font-weight:500}
+
+#banner{background:var(--chip);border-bottom:1px solid var(--line);font-size:14px}
+#banner .wrap{padding-block:10px}
+
+main{padding-block:14px 96px}
+.tools{display:flex;gap:8px;align-items:stretch}
+.search{flex:1;min-width:0}
+.search input,.field input{width:100%;height:44px;padding:0 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-weight:600;white-space:nowrap}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.btn.on{border-color:var(--accent);color:var(--accent)}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.5}
+.link{color:var(--accent);font-weight:600;padding:8px 0}
+
+#filters{margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);display:flex;flex-direction:column;gap:10px}
+.fgroup{display:flex;flex-direction:column;gap:6px}
+.flabel{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{min-height:36px;padding:0 12px;border-radius:999px;background:var(--chip);font-size:14px;font-weight:500;display:inline-flex;align-items:center}
+.chip.on{background:var(--accent);color:var(--on-accent)}
+
+.meta{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-block:12px 8px;font-size:14px;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{min-height:36px;padding:0 12px;font-size:14px;font-weight:600;color:var(--muted)}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--ink);color:var(--bg)}
+.seg.wide{display:flex}
+.seg.wide button{flex:1;min-height:44px;text-align:center}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;display:flex;flex-direction:column;gap:10px;align-items:center}
+
+/* song card */
+.card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 8px 10px 12px}
+.card-main{display:flex;flex-direction:column;gap:2px;min-width:0;padding-block:2px}
+.s-title{font-weight:600;font-size:16px;overflow-wrap:anywhere}
+.s-artist{font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.tags{display:flex;flex-wrap:wrap;gap:4px;grid-column:1/-1;cursor:pointer}
+.tag{display:inline-flex;align-items:center;min-height:22px;padding:0 7px;border-radius:6px;background:var(--chip);font-size:12px;font-weight:500;white-space:nowrap}
+.tag.key{font-family:var(--f-mono);font-weight:600;background:transparent;border:1.5px solid var(--ink)}
+.tag.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tag.empty{background:transparent;border:1px dashed var(--line);color:var(--muted);font-family:var(--f-body);font-weight:400}
+
+.stars{display:flex;align-items:center}
+.stars button{width:32px;height:40px;display:grid;place-items:center;color:var(--muted)}
+.stars svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linejoin:round}
+.stars .star.on{color:var(--star)}
+.stars .star.on svg{fill:currentColor}
+.stars .zero span{width:24px;height:24px;border-radius:50%;border:1.6px solid currentColor;display:grid;place-items:center;font-size:12px;font-weight:600;font-family:var(--f-mono)}
+.stars .zero.on{color:var(--ink)}
+.stars .zero.on span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.stars.big button{width:44px;height:44px}
+.stars.big svg{width:30px;height:30px}
+.stars.big .zero span{width:30px;height:30px;font-size:14px}
+.ministars{display:inline-flex;gap:1px;color:var(--star)}
+.ministars svg{width:16px;height:16px;fill:currentColor}
+.ministars svg.off{fill:none;stroke:var(--muted);stroke-width:1.6}
+
+/* ranking */
+.progress{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 10px;align-items:center;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px;font-size:14px}
+.ini{width:24px;height:24px;border-radius:50%;background:var(--chip);display:inline-grid;place-items:center;font-family:var(--f-mono);font-size:12px;font-weight:600}
+.pname{display:flex;align-items:center;gap:8px;font-weight:500}
+.bar{height:6px;border-radius:3px;background:var(--chip);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.pnum{font-family:var(--f-mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.rrow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.pos{font-family:var(--f-display);font-weight:700;font-size:22px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.rmain{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mvs{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.mv{display:inline-flex;align-items:center;gap:4px;min-height:22px;padding:0 7px;border-radius:6px;background:var(--chip);font-family:var(--f-mono);font-size:12px;font-weight:600}
+.mv.none{background:transparent;border:1px dashed var(--line);color:var(--muted);font-weight:500}
+.rtotal{display:flex;align-items:center;gap:3px;font-family:var(--f-display);font-weight:700;font-size:28px;font-variant-numeric:tabular-nums}
+.rtotal svg{width:18px;height:18px;fill:var(--star)}
+.note{font-size:14px;color:var(--muted);text-align:center;padding:10px 0}
+
+/* setlists */
+.form{display:flex;flex-direction:column;gap:10px;margin-top:10px;padding:12px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.row{display:flex;gap:8px}
+.row>*{flex:1}
+.ghead{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-block:16px 6px}
+.setcard{display:flex;flex-direction:column;gap:2px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.setcard b{font-family:var(--f-display);font-size:24px;font-weight:700;letter-spacing:.01em;line-height:1.1;overflow-wrap:anywhere}
+.setcard span{font-size:14px;color:var(--muted)}
+.back{color:var(--accent);font-weight:600;min-height:44px;display:inline-flex;align-items:center}
+.set-head{display:flex;flex-direction:column;gap:2px;margin-bottom:10px}
+.set-head h2{font-family:var(--f-display);font-weight:700;font-size:34px;line-height:1.05;text-wrap:balance;overflow-wrap:anywhere}
+.set-head p{color:var(--muted);font-size:14px}
+.setlist{list-style:none;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.setlist li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:8px;align-items:center;padding:10px 10px 10px 8px}
+.setlist li+li{border-top:1px solid var(--line)}
+.setlist .n{font-family:var(--f-display);font-weight:700;font-size:22px;text-align:center;color:var(--muted);font-variant-numeric:tabular-nums}
+.sl-main{display:flex;flex-direction:column;min-width:0}
+.sl-main b{font-weight:600;overflow-wrap:anywhere}
+.sl-main span{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.sl-info{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.sl-ctl{display:flex}
+.sl-ctl button{width:38px;height:40px;display:grid;place-items:center;font-size:18px;color:var(--muted)}
+.sl-ctl button[disabled]{opacity:.3}
+.sl-ctl .rm{color:var(--danger)}
+.stack{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+
+/* tabs */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs .wrap{display:flex;padding-inline:8px}
+.tab{flex:1;min-height:58px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.tab svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tab[aria-current="page"]{color:var(--accent)}
+
+/* sheet */
+#sheet{position:fixed;inset:0;z-index:10;display:flex;align-items:flex-end;justify-content:center;background:var(--scrim)}
+.panel{width:100%;max-width:640px;max-height:90%;overflow-y:auto;background:var(--bg);border-radius:18px 18px 0 0;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px}
+.panel.tall{height:90%}
+.sheet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.sheet-head h2{font-family:var(--f-display);font-weight:700;font-size:28px;line-height:1.05;overflow-wrap:anywhere}
+.sheet-head p{color:var(--muted);font-size:15px;margin-top:2px}
+.x{width:44px;height:44px;flex:none;border-radius:50%;background:var(--chip);display:grid;place-items:center;font-size:18px}
+.sec{display:flex;flex-direction:column;gap:8px}
+.sec h3{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.sec h3 b{font-family:var(--f-mono);font-size:16px;color:var(--ink);letter-spacing:0;text-transform:none}
+.vrow{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:36px}
+.vrow .dim{color:var(--muted);font-size:14px}
+.notes{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.pick{min-height:46px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-family:var(--f-mono);font-weight:600;font-size:16px;text-align:center}
+.pick.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pick.txt{font-family:var(--f-body)}
+.pick[disabled]{opacity:.4}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.stepper{display:grid;grid-template-columns:repeat(2,minmax(0,1fr)) minmax(0,1.4fr) repeat(2,minmax(0,1fr));gap:6px;align-items:stretch}
+.stepper input,.stepper output{min-height:46px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-family:var(--f-mono);font-weight:600;font-size:18px;text-align:center;width:100%;display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.stepper input{display:block;padding:0}
+.stepper.three{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) minmax(0,1fr)}
+.plist{display:flex;flex-direction:column;gap:6px;flex:1;min-height:0;overflow-y:auto;margin-inline:-4px;padding-inline:4px}
+.prow{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;padding:8px 10px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.prow .ck{width:24px;height:24px;border-radius:6px;border:1.6px solid var(--muted);display:grid;place-items:center;font-size:15px;font-weight:700;color:transparent}
+.prow.in{border-color:var(--accent)}
+.prow.in .ck{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.ptot{display:flex;align-items:center;gap:2px;font-family:var(--f-mono);font-size:13px;font-weight:600;color:var(--muted)}
+.ptot svg{width:13px;height:13px;fill:var(--star)}
+
+/* login */
+#login{min-height:80vh;display:grid;place-items:center;padding:24px 16px}
+.login-box{width:100%;max-width:360px;display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.login-box h1{font-family:var(--f-display);font-weight:700;font-size:44px;line-height:1;text-transform:uppercase;letter-spacing:.01em}
+.who-grid{display:flex;flex-direction:column;gap:8px}
+.who{min-height:60px;padding:0 18px;border-radius:12px;background:var(--surface);border:1px solid var(--line);font-family:var(--f-display);font-weight:600;font-size:26px;letter-spacing:.02em;display:flex;justify-content:space-between;align-items:center}
+.who i{font-style:normal;color:var(--accent)}
+.hint{font-size:14px;color:var(--muted)}
+
+#toast{position:fixed;left:16px;right:16px;bottom:calc(76px + env(safe-area-inset-bottom,0px));z-index:20;margin-inline:auto;max-width:420px;background:var(--ink);color:var(--bg);padding:12px 14px;border-radius:10px;font-size:14px;text-align:center}
+@media (prefers-reduced-motion:no-preference){.panel{animation:up .18s ease-out}@keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+
+<div id="login" hidden></div>
+
+<div id="app" hidden>
+  <header class="top"><div class="wrap">
+    <span class="brand">Repertório</span>
+    <button class="whobtn" data-act="switch-user" aria-label="Trocar de pessoa"><span id="who"></span><small>trocar</small></button>
+  </div></header>
+  <div id="banner" hidden><div class="wrap" id="banner-text"></div></div>
+  <main class="wrap" id="view"></main>
+  <nav class="tabs" aria-label="Seções"><div class="wrap">
+    <button class="tab" data-act="tab" data-tab="biblioteca"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>Biblioteca</button>
+    <button class="tab" data-act="tab" data-tab="ranking"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 16.9 6.6 19.8l1.1-6.1L3.2 9.4l6.1-.8z"/></svg>Ranking</button>
+    <button class="tab" data-act="tab" data-tab="repertorios"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>Repertórios</button>
+  </div></nav>
+</div>
+
+<div id="sheet" hidden></div>
+<div id="toast" role="status" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script id="seed" type="application/json">{"songs": {"s001": {"title": "Assim Caminha a Humanidade", "artist": "Lulu Santos", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s002": {"title": "Pintura Íntima", "artist": "Kid Abelha", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s003": {"title": "Meu Erro", "artist": "Paralamas do Sucesso", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s004": {"title": "Quero Que Vá Tudo pro Inferno", "artist": "Jota Quest", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s005": {"title": "Tão Seu", "artist": "Skank", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s006": {"title": "Tempos Modernos", "artist": "Lulu Santos", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s007": {"title": "Toda Forma de Amor", "artist": "Lulu Santos", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s008": {"title": "Um Certo Alguém", "artist": "Lulu Santos", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s009": {"title": "Vou Deixar", "artist": "Skank", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s010": {"title": "Agora Só Falta Você", "artist": "Rita Lee", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s011": {"title": "Bete Balanço / Mania de Você", "artist": "Barão Vermelho", "origin": "Nac", "genre": "Pop/Rock", "key": "Dm", "bpm": 0, "voice": "", "dur": 0}, "s012": {"title": "Exagerado", "artist": "Cazuza", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s013": {"title": "Jardins da Babilônia", "artist": "Rita Lee / Barão Vermelho", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s014": {"title": "Olhar 43", "artist": "RPM", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s015": {"title": "Pro Dia Nascer Feliz", "artist": "Cazuza", "origin": "Nac", "genre": "Pop/Rock", "key": "A", "bpm": 0, "voice": "", "dur": 0}, "s016": {"title": "Só Você", "artist": "Fábio Jr.", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s017": {"title": "Caça e Caçador", "artist": "Fábio Jr.", "origin": "Nac", "genre": "Pop/Rock", "key": "A", "bpm": 0, "voice": "", "dur": 0}, "s018": {"title": "À Francesa", "artist": "Marina Lima", "origin": "Nac", "genre": "MPB", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s019": {"title": "O Descobridor dos Sete Mares", "artist": "Lulu Santos", "origin": "Nac", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s020": {"title": "Não Quero Dinheiro (Só Quero Amar)", "artist": "Ivete Sangalo", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s021": {"title": "W/Brasil", "artist": "Jorge Ben Jor", "origin": "Nac", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s022": {"title": "Dancin' Days", "artist": "Lulu Santos", "origin": "Nac", "genre": "Dance", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s023": {"title": "I Want It That Way", "artist": "Backstreet Boys", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s024": {"title": "Black or White", "artist": "Michael Jackson", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s025": {"title": "Bette Davis Eyes", "artist": "Kim Carnes", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s026": {"title": "Faith", "artist": "George Michael", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s027": {"title": "Freedom", "artist": "George Michael", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s028": {"title": "Like a Prayer", "artist": "Madonna", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s029": {"title": "Like a Virgin", "artist": "Madonna", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s030": {"title": "Material Girl", "artist": "Madonna", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s031": {"title": "Hot N Cold", "artist": "Katy Perry", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s032": {"title": "Man! I Feel Like a Woman!", "artist": "Shania Twain", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s033": {"title": "(I've Had) The Time of My Life", "artist": "Bill Medley & Jennifer Warnes", "origin": "Int", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s034": {"title": "Your Song", "artist": "Billy Paul", "origin": "Int", "genre": "Funk/Soul", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s035": {"title": "Crazy", "artist": "Seal", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s036": {"title": "Edge of Glory", "artist": "Lady Gaga / Glee", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s037": {"title": "Take on Me", "artist": "A-ha", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s038": {"title": "Everybody Wants to Rule the World", "artist": "Tears for Fears", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s039": {"title": "She Drives Me Crazy", "artist": "Fine Young Cannibals", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s040": {"title": "Never Gonna Give You Up", "artist": "Rick Astley", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s041": {"title": "I Want You Back", "artist": "Michael Jackson", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s042": {"title": "Mamma Mia", "artist": "ABBA", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s043": {"title": "I Wanna Dance with Somebody", "artist": "Whitney Houston", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s044": {"title": "3AM", "artist": "Matchbox Twenty", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s045": {"title": "How Do You Do!", "artist": "Roxette", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s046": {"title": "The Look", "artist": "Roxette", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s047": {"title": "Don't You (Forget About Me)", "artist": "Simple Minds", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s048": {"title": "I'll Be There for You", "artist": "The Rembrandts", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s049": {"title": "Stay", "artist": "Oingo Boingo", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s050": {"title": "The Power of Love", "artist": "Huey Lewis & The News", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s051": {"title": "Two Princes", "artist": "Spin Doctors", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s052": {"title": "Your Love", "artist": "The Outfield", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s053": {"title": "Footloose", "artist": "Kenny Loggins", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s054": {"title": "Candy", "artist": "Iggy Pop", "origin": "Int", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s055": {"title": "Cryin'", "artist": "Aerosmith", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s056": {"title": "Don't Stop Believin'", "artist": "Journey", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s057": {"title": "Here I Go Again", "artist": "Whitesnake", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s058": {"title": "Livin' on a Prayer", "artist": "Bon Jovi", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s059": {"title": "Keep the Faith", "artist": "Bon Jovi", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s060": {"title": "I Still Haven't Found What I'm Looking For", "artist": "Cher", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s061": {"title": "In Between Days", "artist": "The Cure", "origin": "Int", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s062": {"title": "Sweet Child O' Mine (Female version)", "artist": "Guns N' Roses", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s063": {"title": "Money for Nothing", "artist": "Dire Straits", "origin": "Int", "genre": "Pop/Rock", "key": "Gm", "bpm": 0, "voice": "", "dur": 0}, "s064": {"title": "Start Me Up", "artist": "The Rolling Stones", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s065": {"title": "Summer of '69", "artist": "Bryan Adams", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s066": {"title": "You Shook Me All Night Long (Female version)", "artist": "AC/DC (Celine Dion & Anastacia)", "origin": "Int", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s067": {"title": "A Little Respect", "artist": "Erasure", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s068": {"title": "Just Can't Get Enough", "artist": "Depeche Mode", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s069": {"title": "Flashdance... What a Feeling", "artist": "Irene Cara", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s070": {"title": "Believe", "artist": "Cher", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s071": {"title": "Total Eclipse of the Heart", "artist": "Nicki French", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s072": {"title": "Did You Ever Really Love Me", "artist": "Nicki French", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s073": {"title": "Murder on the Dancefloor", "artist": "Sophie Ellis-Bextor", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s074": {"title": "Please Don't Go", "artist": "Double You", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s075": {"title": "Disco Inferno", "artist": "The Trammps", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s076": {"title": "I Will Survive", "artist": "Gloria Gaynor", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s077": {"title": "That's the Way (I Like It)", "artist": "KC and the Sunshine Band", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s078": {"title": "Y.M.C.A.", "artist": "Village People", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s079": {"title": "Don't Stop 'Til You Get Enough", "artist": "Michael Jackson", "origin": "Int", "genre": "Dance", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s080": {"title": "Uptown Funk", "artist": "Bruno Mars", "origin": "Int", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s081": {"title": "September", "artist": "Earth, Wind & Fire", "origin": "Int", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s082": {"title": "Play That Funky Music", "artist": "Wild Cherry", "origin": "Int", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s083": {"title": "Danza Kuduro", "artist": "Don Omar & Lucenzo", "origin": "Int", "genre": "Latino", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s084": {"title": "Estoy Aquí", "artist": "Shakira", "origin": "Int", "genre": "Latino", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s085": {"title": "Fuego Lento", "artist": "Rosana", "origin": "Int", "genre": "Latino", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s086": {"title": "Bailame", "artist": "Gipsy Kings", "origin": "Int", "genre": "Latino", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s087": {"title": "Brasil", "artist": "Gal Costa", "origin": "Nac", "genre": "MPB", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s088": {"title": "Beleza Rara", "artist": "Banda Eva", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s089": {"title": "Alô Paixão", "artist": "Banda Eva", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s090": {"title": "De Ladinho", "artist": "Banda Eva", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s091": {"title": "Me Abraça", "artist": "Banda Eva", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s092": {"title": "Ara Ketu Bom Demais", "artist": "Ara Ketu", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s093": {"title": "Eva", "artist": "Banda Eva", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s094": {"title": "Beijo na Boca", "artist": "Netinho", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s095": {"title": "Festa", "artist": "Ivete Sangalo", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s096": {"title": "Sorte Grande", "artist": "Ivete Sangalo", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s097": {"title": "Milla", "artist": "Netinho", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s098": {"title": "País Tropical", "artist": "Ivete Sangalo", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s099": {"title": "Arerê", "artist": "Ivete Sangalo", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s100": {"title": "Taj Mahal", "artist": "Ivete Sangalo", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s101": {"title": "Sereia", "artist": "Inimigos da HP", "origin": "Nac", "genre": "Axé/Pagode", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s102": {"title": "Budapest", "artist": "George Ezra", "origin": "Int", "genre": "Pop/Rock", "key": "F", "bpm": 0, "voice": "", "dur": 0}, "s103": {"title": "Fields of Gold", "artist": "Sting", "origin": "Int", "genre": "Pop/Rock", "key": "Bm", "bpm": 0, "voice": "", "dur": 0}, "s104": {"title": "Fly Me to the Moon", "artist": "Frank Sinatra", "origin": "Int", "genre": "Pop/Rock", "key": "Bb", "bpm": 0, "voice": "", "dur": 0}, "s105": {"title": "Here Comes the Sun", "artist": "The Beatles", "origin": "Int", "genre": "Pop/Rock", "key": "A", "bpm": 0, "voice": "", "dur": 0}, "s106": {"title": "High", "artist": "Lighthouse Family", "origin": "Int", "genre": "Pop/Rock", "key": "Bb", "bpm": 0, "voice": "", "dur": 0}, "s107": {"title": "Just the Way You Are", "artist": "Barry White", "origin": "Int", "genre": "Funk/Soul", "key": "A", "bpm": 0, "voice": "", "dur": 0}, "s108": {"title": "Loving Every Minute", "artist": "Lighthouse Family", "origin": "Int", "genre": "Pop/Rock", "key": "Dm", "bpm": 0, "voice": "", "dur": 0}, "s109": {"title": "My Way", "artist": "Frank Sinatra", "origin": "Int", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s110": {"title": "New York, New York", "artist": "Frank Sinatra", "origin": "Int", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s111": {"title": "Over the Rainbow", "artist": "Israel Kamakawiwo'ole", "origin": "Int", "genre": "Pop/Rock", "key": "B", "bpm": 0, "voice": "", "dur": 0}, "s112": {"title": "Sailing", "artist": "Christopher Cross", "origin": "Int", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s113": {"title": "Something", "artist": "The Beatles", "origin": "Int", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s114": {"title": "Stuck on You", "artist": "Lionel Richie", "origin": "Int", "genre": "Pop/Rock", "key": "E", "bpm": 0, "voice": "", "dur": 0}, "s115": {"title": "Unchain My Heart", "artist": "Joe Cocker", "origin": "Int", "genre": "Pop/Rock", "key": "Gm", "bpm": 0, "voice": "", "dur": 0}, "s116": {"title": "When You Say Nothing at All", "artist": "Ronan Keating", "origin": "Int", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s117": {"title": "You'll Never Find Another Love Like Mine", "artist": "Lou Rawls", "origin": "Int", "genre": "Funk/Soul", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s118": {"title": "You've Got a Friend", "artist": "James Taylor", "origin": "Int", "genre": "Pop/Rock", "key": "A", "bpm": 0, "voice": "", "dur": 0}, "s119": {"title": "You've Got to Hide Your Love Away", "artist": "The Beatles", "origin": "Int", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s120": {"title": "À Sua Maneira", "artist": "Capital Inicial", "origin": "Nac", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s121": {"title": "A Fórmula do Amor", "artist": "Léo Jaime / Kid Abelha", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s122": {"title": "Alma Gêmea", "artist": "Fábio Jr.", "origin": "Nac", "genre": "Pop/Rock", "key": "B", "bpm": 0, "voice": "", "dur": 0}, "s123": {"title": "Amante Profissional", "artist": "Herva Doce", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s124": {"title": "Anna Júlia", "artist": "Los Hermanos", "origin": "Nac", "genre": "Pop/Rock", "key": "E", "bpm": 0, "voice": "", "dur": 0}, "s125": {"title": "As Sete Vampiras", "artist": "Léo Jaime", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s126": {"title": "Até Quando Esperar", "artist": "Plebe Rude", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s127": {"title": "Camila, Camila", "artist": "Nenhum de Nós", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s128": {"title": "Casa", "artist": "Lulu Santos", "origin": "Nac", "genre": "Pop/Rock", "key": "Bb", "bpm": 0, "voice": "", "dur": 0}, "s129": {"title": "Cheia de Charme", "artist": "Guilherme Arantes", "origin": "Nac", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s130": {"title": "Conquista", "artist": "Claudinho & Buchecha", "origin": "Nac", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s131": {"title": "Corações Psicodélicos", "artist": "Lobão", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s132": {"title": "Dias de Luta", "artist": "Ira!", "origin": "Nac", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s133": {"title": "Envelheço na Cidade", "artist": "Ira!", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s134": {"title": "Epitáfio", "artist": "Titãs", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s135": {"title": "Eu Sei", "artist": "Legião Urbana", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s136": {"title": "Eu Sei", "artist": "Papas da Língua", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s137": {"title": "Festa no Apê", "artist": "Latino", "origin": "Nac", "genre": "Dance", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s138": {"title": "Fogo e Paixão", "artist": "Wando", "origin": "Nac", "genre": "MPB", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s139": {"title": "Garotos II", "artist": "Leoni", "origin": "Nac", "genre": "Pop/Rock", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s140": {"title": "Glamurosa", "artist": "MC Marcinho", "origin": "Nac", "genre": "Funk/Soul", "key": "Bm", "bpm": 0, "voice": "", "dur": 0}, "s141": {"title": "Go Back", "artist": "Titãs", "origin": "Nac", "genre": "Pop/Rock", "key": "A", "bpm": 0, "voice": "", "dur": 0}, "s142": {"title": "Índios", "artist": "Legião Urbana", "origin": "Nac", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s143": {"title": "Já Sei Namorar", "artist": "Tribalistas", "origin": "Nac", "genre": "MPB", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s144": {"title": "La Belle de Jour", "artist": "Alceu Valença", "origin": "Nac", "genre": "MPB", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s145": {"title": "Lanterna dos Afogados", "artist": "Paralamas do Sucesso", "origin": "Nac", "genre": "Pop/Rock", "key": "B", "bpm": 0, "voice": "", "dur": 0}, "s146": {"title": "Meu Sangue Ferve por Você", "artist": "Sidney Magal", "origin": "Nac", "genre": "MPB", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s147": {"title": "Natasha", "artist": "Capital Inicial", "origin": "Nac", "genre": "Pop/Rock", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s148": {"title": "Noite do Prazer", "artist": "Cláudio Zoli", "origin": "Nac", "genre": "Funk/Soul", "key": "", "bpm": 0, "voice": "", "dur": 0}, "s149": {"title": "Por Você", "artist": "Barão Vermelho", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s150": {"title": "Primeiros Erros", "artist": "Capital Inicial", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s151": {"title": "Rádio Blá", "artist": "Lobão", "origin": "Nac", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s152": {"title": "Romance Ideal", "artist": "Paralamas do Sucesso", "origin": "Nac", "genre": "Pop/Rock", "key": "E", "bpm": 0, "voice": "", "dur": 0}, "s153": {"title": "Sandra Rosa Madalena", "artist": "Sidney Magal", "origin": "Nac", "genre": "MPB", "key": "Em", "bpm": 0, "voice": "", "dur": 0}, "s154": {"title": "Será", "artist": "Legião Urbana", "origin": "Nac", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s155": {"title": "Tão Bem", "artist": "Lulu Santos", "origin": "Nac", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s156": {"title": "Tempo Perdido", "artist": "Legião Urbana", "origin": "Nac", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s157": {"title": "Várias Queixas", "artist": "Gilsons", "origin": "Nac", "genre": "MPB", "key": "Em", "bpm": 0, "voice": "", "dur": 0}, "s158": {"title": "Whisky a Go Go", "artist": "Roupa Nova", "origin": "Nac", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s159": {"title": "Amarillo by Morning", "artist": "George Strait", "origin": "Int", "genre": "Folk/Country", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s160": {"title": "Half of My Heart", "artist": "John Mayer", "origin": "Int", "genre": "Folk/Country", "key": "E", "bpm": 0, "voice": "", "dur": 0}, "s161": {"title": "I'll Try", "artist": "Alan Jackson", "origin": "Int", "genre": "Folk/Country", "key": "F", "bpm": 0, "voice": "", "dur": 0}, "s162": {"title": "Little Bitty", "artist": "Alan Jackson", "origin": "Int", "genre": "Folk/Country", "key": "E", "bpm": 0, "voice": "", "dur": 0}, "s163": {"title": "So Far Away", "artist": "Dire Straits", "origin": "Int", "genre": "Folk/Country", "key": "E", "bpm": 0, "voice": "", "dur": 0}, "s164": {"title": "Standing Outside the Fire", "artist": "Garth Brooks", "origin": "Int", "genre": "Folk/Country", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s165": {"title": "Sweet Caroline", "artist": "Neil Diamond", "origin": "Int", "genre": "Folk/Country", "key": "B", "bpm": 0, "voice": "", "dur": 0}, "s166": {"title": "Take Me Home, Country Roads", "artist": "John Denver", "origin": "Int", "genre": "Folk/Country", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s167": {"title": "(I Can't Get No) Satisfaction", "artist": "The Rolling Stones", "origin": "Int", "genre": "Pop/Rock", "key": "D", "bpm": 0, "voice": "", "dur": 0}, "s168": {"title": "Losing My Religion", "artist": "R.E.M.", "origin": "Int", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s169": {"title": "Psycho Killer", "artist": "Talking Heads", "origin": "Int", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s170": {"title": "Runaway Train", "artist": "Soul Asylum", "origin": "Int", "genre": "Pop/Rock", "key": "C", "bpm": 0, "voice": "", "dur": 0}, "s171": {"title": "Save Tonight", "artist": "Eagle-Eye Cherry", "origin": "Int", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s172": {"title": "Sultans of Swing", "artist": "Dire Straits", "origin": "Int", "genre": "Pop/Rock", "key": "Dm", "bpm": 0, "voice": "", "dur": 0}, "s173": {"title": "Sunday Morning", "artist": "The Bolshoi", "origin": "Int", "genre": "Pop/Rock", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s174": {"title": "All Night Long", "artist": "Lionel Richie", "origin": "Int", "genre": "Dance", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s175": {"title": "Anunciação (Remix)", "artist": "Alceu Valença", "origin": "Nac", "genre": "Dance", "key": "G", "bpm": 0, "voice": "", "dur": 0}, "s176": {"title": "Cold Heart", "artist": "Elton John & Dua Lipa", "origin": "Int", "genre": "Dance", "key": "Am", "bpm": 0, "voice": "", "dur": 0}, "s177": {"title": "The Promise", "artist": "When in Rome", "origin": "Int", "genre": "Dance", "key": "C", "bpm": 0, "voice": "", "dur": 0}}}</script>
+<script>
+(function(){
+'use strict';
+
+var MEMBERS=[{id:'giorgia',name:'Giorgia'},{id:'bil',name:'Bil'},{id:'paulo',name:'Paulo'},{id:'jorge',name:'Jorge'}];
+var GENRES=['Pop/Rock','Dance','Axé/Pagode','Funk/Soul','MPB','Folk/Country','Latino'];
+var TABS=['biblioteca','ranking','repertorios'];
+var VOICE={H:'H',M:'M',HM:'H+M'};
+var STAR='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.7 5.6 6.1.8-4.5 4.3 1.1 6.1L12 16.9 6.6 19.8l1.1-6.1L3.2 9.4l6.1-.8z"/></svg>';
+var STAR_OFF=STAR.replace('<svg ','<svg class="off" ');
+
+function $(s,r){return (r||document).querySelector(s)}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function norm(s){return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase()}
+function sortKey(s){return norm(s).replace(/^[^a-z0-9]+/,'')}
+var store={
+  get:function(k){try{return localStorage.getItem(k)}catch(e){return null}},
+  set:function(k,v){try{localStorage.setItem(k,v)}catch(e){}},
+  del:function(k){try{localStorage.removeItem(k)}catch(e){}}
+};
+function memberName(id){for(var i=0;i<MEMBERS.length;i++)if(MEMBERS[i].id===id)return MEMBERS[i].name;return ''}
+
+var S={
+  me:null,word:null,gate:{msg:'',miss:'',confirm:false},tab:'biblioteca',db:null,dbState:'loading',readOnly:false,
+  songs:{},votes:{},sets:{},got:{songs:false,votes:false,sets:false},
+  q:'',sort:'title',f:{origin:'',voice:'',genre:'',novote:false,nokey:false},showFilters:false,stick:{},
+  rankOrigin:'',openSet:null,setForm:null,setEdit:false,confirmDel:false,busy:false,
+  sheet:null
+};
+var mounted=null,setIds={},raw={},pend={},toastTimer=null,unsub=[];
+var FIREBASE_CONFIG={"apiKey": "AIzaSyBDz2AnmLwaQ9zJn5LUwpOJ4PS1-c7GuF4", "authDomain": "band-6584c.firebaseapp.com", "projectId": "band-6584c", "storageBucket": "band-6584c.firebasestorage.app", "messagingSenderId": "529027888810", "appId": "1:529027888810:web:408f602f9f7ed1ef2a42d3"};
+function P(path){return 'bands/'+S.word+'/'+path}
+
+/* ---------- data layer ---------- */
+function isObj(x){return !!x&&typeof x==='object'&&!Array.isArray(x)}
+function clone(x){return x==null?null:JSON.parse(JSON.stringify(x))}
+function merge(a,b){
+  Object.keys(b).forEach(function(k){
+    var v=b[k];
+    if(isObj(v))a[k]=merge(isObj(a[k])?a[k]:{},v);
+    else a[k]=Array.isArray(v)?v.slice():v;
+  });
+  return a;
+}
+function viewDoc(path){
+  var d=clone(raw[path]),p=pend[path];
+  if(p){
+    if(p.inflight)d=merge(d||{},p.inflight);
+    if(p.patch)d=merge(d||{},p.patch);
+  }
+  return d;
+}
+function derive(){
+  var lib=viewDoc('lib/songs');
+  S.songs=(lib&&isObj(lib.songs))?lib.songs:{};
+  S.votes={};
+  MEMBERS.forEach(function(m){var d=viewDoc('votes/'+m.id);S.votes[m.id]=(d&&isObj(d.v))?d.v:{}});
+  S.sets={};
+  Object.keys(setIds).forEach(function(id){var d=viewDoc('setlists/'+id);if(d)S.sets[id]=d});
+}
+function patchDoc(path,patch,delay){
+  if(!S.db||S.readOnly)return;
+  var p=pend[path]||(pend[path]={patch:null,inflight:null,busy:false,timer:null});
+  p.patch=merge(p.patch||{},patch);
+  clearTimeout(p.timer);
+  p.timer=setTimeout(function(){flush(path)},delay==null?300:delay);
+  derive();refresh();
+}
+function sleep(ms){return new Promise(function(r){setTimeout(r,ms)})}
+function writeMerge(path,data){
+  /* set+merge deep-merges nested maps and creates the document when missing */
+  var ref=S.db.doc(P(path));
+  return ref.set(data,{merge:true}).catch(function(e){
+    if(e&&e.code==='unavailable'){
+      return sleep(500+Math.random()*700).then(function(){return ref.set(data,{merge:true})});
+    }
+    throw e;
+  });
+}
+function flush(path){
+  var p=pend[path];
+  if(!p||p.busy||!p.patch)return;
+  p.busy=true;p.inflight=p.patch;p.patch=null;
+  writeMerge(path,p.inflight).then(function(){
+    /* fold the confirmed write into raw so the view does not flicker before the snapshot lands */
+    raw[path]=merge(clone(raw[path])||{},p.inflight);
+  },function(e){
+    p.patch=null;fail(e);
+  }).then(function(){
+    p.inflight=null;p.busy=false;
+    if(p.patch)flush(path);else{derive();refresh()}
+  });
+}
+function fail(e){
+  var code=e&&e.code;
+  if(code==='permission-denied'||code==='unauthenticated'){
+    S.readOnly=true;
+    Object.keys(pend).forEach(function(k){clearTimeout(pend[k].timer);pend[k].patch=null});
+  }else if(code==='resource-exhausted'){
+    toast('O limite gratuito de hoje acabou. Volta a funcionar amanhã.');
+  }else{
+    toast('Não deu para salvar. Tente de novo.');
+  }
+  derive();refresh();
+}
+function onData(){derive();refresh()}
+function onSubErr(){S.dbState='none';refresh()}
+
+function initDb(){
+  if(S.db)return true;
+  try{
+    if(!window.firebase||!FIREBASE_CONFIG||!FIREBASE_CONFIG.projectId)return false;
+    firebase.initializeApp(FIREBASE_CONFIG);
+    S.db=firebase.firestore();
+    return true;
+  }catch(e){return false}
+}
+function disconnect(){
+  unsub.forEach(function(u){try{u()}catch(e){}});
+  unsub=[];
+  Object.keys(pend).forEach(function(k){clearTimeout(pend[k].timer)});
+  raw={};pend={};setIds={};S.got={songs:false,votes:false,sets:false};S.readOnly=false;
+  S.openSet=null;S.setForm=null;S.sheet=null;
+  derive();
+}
+function connect(){
+  disconnect();
+  if(!initDb()){S.dbState='none';refresh();return}
+  S.dbState='ok';
+  unsub.push(S.db.doc(P('lib/songs')).onSnapshot(function(s){
+    raw['lib/songs']=s.exists?s.data():null;S.got.songs=true;onData();
+  },onSubErr));
+  unsub.push(S.db.collection(P('votes')).onSnapshot(function(q){
+    MEMBERS.forEach(function(m){delete raw['votes/'+m.id]});
+    q.docs.forEach(function(d){raw['votes/'+d.id]=d.data()});
+    S.got.votes=true;onData();
+  },onSubErr));
+  unsub.push(S.db.collection(P('setlists')).onSnapshot(function(q){
+    Object.keys(setIds).forEach(function(id){delete raw['setlists/'+id]});
+    setIds={};
+    q.docs.forEach(function(d){setIds[d.id]=true;raw['setlists/'+d.id]=d.data()});
+    S.got.sets=true;onData();
+  },onSubErr));
+  refresh();
+}
+function enterBand(w){
+  S.word=w;store.set('banda.word',w);S.gate={msg:'',miss:'',confirm:false};
+  connect();window.scrollTo(0,0);
+}
+
+/* ---------- helpers on state ---------- */
+function songIds(){return Object.keys(S.songs).filter(function(id){var s=S.songs[id];return isObj(s)&&!s.removed&&s.title})}
+function getVote(m,id){var v=S.votes[m]&&S.votes[m][id];return (typeof v==='number'&&v>=0&&v<=3)?v:null}
+function stats(id){
+  var total=0,count=0;
+  MEMBERS.forEach(function(m){var v=getVote(m.id,id);if(v!=null){total+=v;count++}});
+  return {total:total,count:count};
+}
+function parseKey(k){
+  var m=/^([A-G])([#b]?)(m?)$/.exec(k||'');
+  return m?{note:m[1],acc:m[2],mode:m[3]}:{note:'',acc:'',mode:''};
+}
+function fmtDur(sec){sec=Math.round(sec||0);var m=Math.floor(sec/60),s=sec%60;return m+':'+(s<10?'0':'')+s}
+function fmtTotal(sec){
+  var min=Math.round(sec/60);
+  if(min<60)return min+' min';
+  var h=Math.floor(min/60),r=min%60;return h+'h'+(r<10?'0':'')+r;
+}
+function fmtDate(d){
+  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(d||'');
+  if(!m)return 'Sem data';
+  var dt=new Date(+m[1],+m[2]-1,+m[3]);
+  try{return dt.toLocaleDateString('pt-BR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'})}catch(e){return m[3]+'/'+m[2]+'/'+m[1]}
+}
+function today(){var d=new Date();function p(n){return (n<10?'0':'')+n}return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
+function setSongs(set){return (Array.isArray(set.songs)?set.songs:[]).filter(function(id){return S.songs[id]&&!S.songs[id].removed})}
+function setSummary(set){
+  var ids=setSongs(set),dur=0,known=0;
+  ids.forEach(function(id){var d=+S.songs[id].dur||0;if(d>0){dur+=d;known++}});
+  var t=ids.length+(ids.length===1?' música':' músicas');
+  if(known>0){
+    t+=' · ≈ '+fmtTotal(dur);
+    if(known<ids.length)t+=' ('+(ids.length-known)+' sem duração)';
+  }
+  return t;
+}
+function toast(msg){
+  var t=$('#toast');t.textContent=msg;t.hidden=false;
+  clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.hidden=true},3200);
+}
+
+/* ---------- small renderers ---------- */
+function tagsHTML(s){
+  var h='';
+  h+=s.key?'<span class="tag key">'+esc(s.key)+'</span>':'<span class="tag empty">tom</span>';
+  h+=(+s.bpm>0)?'<span class="tag mono">'+(+s.bpm)+' bpm</span>':'<span class="tag empty">bpm</span>';
+  h+=VOICE[s.voice]?'<span class="tag">'+VOICE[s.voice]+'</span>':'<span class="tag empty">voz</span>';
+  if(s.origin)h+='<span class="tag">'+esc(s.origin)+'</span>';
+  if(s.genre)h+='<span class="tag">'+esc(s.genre)+'</span>';
+  return h;
+}
+function starsHTML(id,my,big){
+  var h='<div class="stars'+(big?' big':'')+'" role="group" aria-label="Meu voto">';
+  h+='<button class="zero'+(my===0?' on':'')+'" data-act="vote" data-id="'+id+'" data-n="0" aria-label="Zero estrelas" aria-pressed="'+(my===0)+'"><span>0</span></button>';
+  for(var n=1;n<=3;n++){
+    var on=my!=null&&my>=n;
+    h+='<button class="star'+(on?' on':'')+'" data-act="vote" data-id="'+id+'" data-n="'+n+'" aria-label="'+n+(n===1?' estrela':' estrelas')+'" aria-pressed="'+(my===n)+'">'+STAR+'</button>';
+  }
+  return h+'</div>';
+}
+function miniStars(v){
+  var h='<span class="ministars" aria-label="'+v+' de 3 estrelas">';
+  for(var n=1;n<=3;n++)h+=(v>=n?STAR:STAR_OFF);
+  return h+'</span>';
+}
+function stateBox(){
+  if(S.dbState==='loading'||(S.dbState==='ok'&&!S.got.songs))return '<div class="empty">Carregando as músicas…</div>';
+  if(S.dbState==='none')return '<div class="empty"><b>Não deu para conectar.</b><span>Confira a internet e abra o site de novo.</span></div>';
+  if(!songIds().length)return '<div class="empty"><b>A biblioteca está vazia.</b><span>As músicas aparecem aqui assim que forem cadastradas.</span></div>';
+  return '';
+}
+
+/* ---------- login ---------- */
+function renderLogin(){
+  var h='<div class="login-box"><p class="eyebrow">Repertório da banda</p><h1>Quem é você?</h1><div class="who-grid">';
+  MEMBERS.forEach(function(m){h+='<button class="who" data-act="login" data-id="'+m.id+'"><span>'+esc(m.name)+'</span><i aria-hidden="true">→</i></button>'});
+  h+='</div><p class="hint">Seu nome fica salvo neste aparelho. Dá para trocar depois.</p>'+
+    '<button class="link" data-act="forget-word">Trocar a palavra da banda</button></div>';
+  $('#login').innerHTML=h;
+}
+function renderGate(){
+  $('#login').innerHTML='<div class="login-box"><p class="eyebrow">Repertório da banda</p><h1>Qual é a palavra?</h1>'+
+    '<label class="field"><span>Palavra secreta da banda</span><input id="word" type="text" autocapitalize="none" autocomplete="off" autocorrect="off" spellcheck="false" maxlength="40"></label>'+
+    '<button class="btn primary block" data-act="enter-word">Entrar</button><div class="hint" id="word-msg"></div></div>';
+  gateMsg();
+}
+function gateMsg(){
+  var m=$('#word-msg');if(!m)return;
+  var h=esc(S.gate.msg||'');
+  if(S.gate.miss){
+    if(S.gate.confirm)h='<div class="form"><b>Criar uma biblioteca nova com a palavra “'+esc(S.gate.miss)+'”?</b>'+
+      '<span>Só o Jorge deve fazer isso, e uma vez só. Se a banda já tem biblioteca, a palavra digitada está errada.</span>'+
+      '<button class="btn primary" data-act="create-lib">Criar biblioteca</button></div>';
+    else h+=' <button class="link" data-act="create-ask">É a primeira vez? Criar a biblioteca da banda</button>';
+  }
+  m.innerHTML=h;
+}
+
+/* ---------- biblioteca ---------- */
+function mountLib(){
+  $('#view').innerHTML=
+    '<div class="tools"><label class="search"><span class="sr">Buscar música ou artista</span>'+
+    '<input id="q" type="search" placeholder="Buscar música ou artista" autocomplete="off" enterkeyhint="search"></label>'+
+    '<button class="btn" id="btn-filters" data-act="toggle-filters">Filtros</button></div>'+
+    '<div id="filters" hidden></div>'+
+    '<div class="meta"><span id="count"></span><span class="seg" role="group" aria-label="Ordenar por">'+
+    '<button data-act="sort" data-v="title">Música</button><button data-act="sort" data-v="artist">Artista</button></span></div>'+
+    '<div id="list" class="list"></div>';
+  $('#q').value=S.q;
+}
+function activeFilters(){var f=S.f,n=0;if(f.origin)n++;if(f.voice)n++;if(f.genre)n++;if(f.novote)n++;if(f.nokey)n++;return n}
+function chip(k,v,label){
+  var on=(typeof S.f[k]==='boolean')?S.f[k]:S.f[k]===v;
+  return '<button class="chip'+(on?' on':'')+'" data-act="filt" data-k="'+k+'" data-v="'+esc(v)+'" aria-pressed="'+on+'">'+esc(label)+'</button>';
+}
+function filtersHTML(){
+  var h='<div class="fgroup"><span class="flabel">Origem</span><div class="chips">'+chip('origin','Nac','Nacional')+chip('origin','Int','Internacional')+'</div></div>';
+  h+='<div class="fgroup"><span class="flabel">Voz</span><div class="chips">'+chip('voice','H','H')+chip('voice','M','M')+chip('voice','HM','H+M')+'</div></div>';
+  h+='<div class="fgroup"><span class="flabel">Gênero</span><div class="chips">'+GENRES.map(function(g){return chip('genre',g,g)}).join('')+'</div></div>';
+  h+='<div class="fgroup"><span class="flabel">Pendências</span><div class="chips">'+chip('novote','1','Falta meu voto')+chip('nokey','1','Sem tom')+'</div></div>';
+  if(activeFilters())h+='<button class="link" data-act="clear-filters">Limpar filtros</button>';
+  return h;
+}
+function libIds(){
+  var q=norm(S.q),f=S.f;
+  var ids=songIds().filter(function(id){
+    var s=S.songs[id];
+    if(q&&norm(s.title+' '+s.artist).indexOf(q)<0)return false;
+    if(f.origin&&s.origin!==f.origin)return false;
+    if(f.voice&&s.voice!==f.voice)return false;
+    if(f.genre&&s.genre!==f.genre)return false;
+    if(f.nokey&&s.key)return false;
+    if(f.novote&&getVote(S.me,id)!=null&&!S.stick[id])return false;
+    return true;
+  });
+  var k=S.sort==='artist'?'artist':'title';
+  ids.sort(function(a,b){
+    var x=sortKey(S.songs[a][k]),y=sortKey(S.songs[b][k]);
+    if(x!==y)return x<y?-1:1;
+    x=sortKey(S.songs[a].title);y=sortKey(S.songs[b].title);
+    return x<y?-1:x>y?1:0;
+  });
+  return ids;
+}
+function refreshLib(){
+  var n=activeFilters(),fb=$('#btn-filters');
+  fb.textContent=n?'Filtros ('+n+')':'Filtros';
+  fb.className='btn'+(n||S.showFilters?' on':'');
+  fb.setAttribute('aria-expanded',S.showFilters);
+  var fp=$('#filters');fp.hidden=!S.showFilters;
+  if(S.showFilters)fp.innerHTML=filtersHTML();
+  document.querySelectorAll('[data-act="sort"]').forEach(function(b){b.className=b.dataset.v===S.sort?'on':''});
+  var box=stateBox(),list=$('#list');
+  if(box){list.innerHTML=box;$('#count').textContent='';return}
+  var all=songIds().length,ids=libIds();
+  $('#count').textContent=ids.length===all?all+' músicas':ids.length+' de '+all+' músicas';
+  if(!ids.length){
+    list.innerHTML='<div class="empty"><b>Nenhuma música com essa busca.</b><button class="link" data-act="clear-filters">Limpar busca e filtros</button></div>';
+    return;
+  }
+  list.innerHTML=ids.map(function(id){
+    var s=S.songs[id];
+    return '<article class="card"><button class="card-main" data-act="open-song" data-id="'+id+'">'+
+      '<span class="s-title">'+esc(s.title)+'</span><span class="s-artist">'+esc(s.artist)+'</span>'+
+      '</button>'+starsHTML(id,getVote(S.me,id),false)+'<div class="tags" data-act="open-song" data-id="'+id+'">'+tagsHTML(s)+'</div></article>';
+  }).join('');
+}
+
+/* ---------- ranking ---------- */
+function mountRank(){
+  $('#view').innerHTML='<div id="progress"></div><div class="meta"><span id="rcount"></span>'+
+    '<span class="seg" role="group" aria-label="Origem"><button data-act="rank-origin" data-v="">Todas</button>'+
+    '<button data-act="rank-origin" data-v="Nac">Nac</button><button data-act="rank-origin" data-v="Int">Int</button></span></div>'+
+    '<div id="rlist" class="list"></div>';
+}
+function refreshRank(){
+  document.querySelectorAll('[data-act="rank-origin"]').forEach(function(b){b.className=b.dataset.v===S.rankOrigin?'on':''});
+  var box=stateBox();
+  if(box){$('#progress').innerHTML='';$('#rcount').textContent='';$('#rlist').innerHTML=box;return}
+  var all=songIds();
+  var ph='<div class="progress">';
+  MEMBERS.forEach(function(m){
+    var c=0;all.forEach(function(id){if(getVote(m.id,id)!=null)c++});
+    var pct=all.length?Math.round(100*c/all.length):0;
+    ph+='<span class="pname"><span class="ini">'+esc(m.name.charAt(0))+'</span>'+esc(m.name)+(m.id===S.me?' (você)':'')+'</span>'+
+      '<span class="bar" aria-hidden="true"><i style="width:'+pct+'%"></i></span><span class="pnum">'+c+'/'+all.length+'</span>';
+  });
+  $('#progress').innerHTML=ph+'</div>';
+  var ids=all.filter(function(id){return !S.rankOrigin||S.songs[id].origin===S.rankOrigin});
+  var rows=[],unvoted=0;
+  ids.forEach(function(id){var st=stats(id);if(st.count)rows.push({id:id,total:st.total,count:st.count});else unvoted++});
+  rows.sort(function(a,b){
+    if(b.total!==a.total)return b.total-a.total;
+    var x=sortKey(S.songs[a.id].title),y=sortKey(S.songs[b.id].title);return x<y?-1:x>y?1:0;
+  });
+  $('#rcount').textContent=rows.length+(rows.length===1?' música votada':' músicas votadas');
+  if(!rows.length){
+    $('#rlist').innerHTML='<div class="empty"><b>Ninguém votou ainda.</b><span>Na Biblioteca, toque nas estrelas ao lado de cada música.</span></div>';
+    return;
+  }
+  var h=rows.map(function(r,i){
+    var s=S.songs[r.id];
+    var mv=MEMBERS.map(function(m){
+      var v=getVote(m.id,r.id);
+      return '<span class="mv'+(v==null?' none':'')+'">'+esc(m.name.charAt(0))+' '+(v==null?'–':v)+'</span>';
+    }).join('');
+    return '<button class="rrow" data-act="open-song" data-id="'+r.id+'"><span class="pos">'+(i+1)+'</span>'+
+      '<span class="rmain"><span class="s-title">'+esc(s.title)+'</span><span class="s-artist">'+esc(s.artist)+'</span>'+
+      '<span class="mvs">'+mv+'</span></span><span class="rtotal">'+r.total+STAR+'</span></button>';
+  }).join('');
+  if(unvoted)h+='<p class="note">'+unvoted+(unvoted===1?' música ainda sem nenhum voto.':' músicas ainda sem nenhum voto.')+'</p>';
+  $('#rlist').innerHTML=h;
+}
+
+/* ---------- repertórios ---------- */
+function setFormHTML(f,isNew){
+  return '<div class="form"><label class="field"><span>Nome do show</span><input id="set-name" type="text" maxlength="80" placeholder="Ex.: Casamento da Ana" value="'+esc(f.name||'')+'"></label>'+
+    '<label class="field"><span>Data</span><input id="set-date" type="date" value="'+esc(f.date||'')+'"></label>'+
+    '<div class="row"><button class="btn" data-act="cancel-set-form">Cancelar</button>'+
+    '<button class="btn primary" data-act="save-set-form"'+(S.busy?' disabled':'')+'>'+(isNew?'Criar':'Salvar')+'</button></div></div>';
+}
+function refreshSets(force){
+  var ae=document.activeElement;
+  if(!force&&ae&&ae.matches&&ae.matches('#view input'))return;
+  var v=$('#view');
+  if(S.dbState!=='ok'||!S.got.sets||!S.got.songs){v.innerHTML=stateBox()||'<div class="empty">Carregando os repertórios…</div>';return}
+  if(S.openSet&&!S.sets[S.openSet]){S.openSet=null;S.setEdit=false;S.confirmDel=false}
+  if(S.openSet){v.innerHTML=setDetailHTML(S.openSet);return}
+  var h='';
+  if(S.setForm&&S.setForm.id==null)h+=setFormHTML(S.setForm,true);
+  else h+='<button class="btn primary block" data-act="new-set"'+(S.readOnly?' disabled':'')+'>Novo repertório</button>';
+  var ids=Object.keys(S.sets),t=today(),up=[],past=[],nod=[];
+  ids.forEach(function(id){var d=S.sets[id].date;if(!/^\d{4}-\d{2}-\d{2}$/.test(d||''))nod.push(id);else if(d>=t)up.push(id);else past.push(id)});
+  up.sort(function(a,b){return S.sets[a].date<S.sets[b].date?-1:1});
+  past.sort(function(a,b){return S.sets[a].date>S.sets[b].date?-1:1});
+  function group(label,arr){
+    if(!arr.length)return '';
+    return '<p class="ghead">'+label+'</p><div class="list">'+arr.map(function(id){
+      var s=S.sets[id];
+      return '<button class="setcard" data-act="open-set" data-id="'+esc(id)+'"><b>'+esc(s.name||'Sem nome')+'</b><span>'+esc(fmtDate(s.date))+' · '+esc(setSummary(s))+'</span></button>';
+    }).join('')+'</div>';
+  }
+  if(!ids.length&&!S.setForm)h+='<div class="empty" style="margin-top:12px"><b>Nenhum repertório ainda.</b><span>Crie um para cada show e escolha as músicas da biblioteca.</span></div>';
+  h+=group('Próximos shows',up)+group('Sem data',nod)+group('Shows passados',past);
+  v.innerHTML=h;
+}
+function setDetailHTML(id){
+  var set=S.sets[id],ids=setSongs(set);
+  var h='<button class="back" data-act="back-sets">‹ Repertórios</button>';
+  if(S.setForm&&S.setForm.id===id)h+=setFormHTML(S.setForm,false);
+  else h+='<div class="set-head"><h2>'+esc(set.name||'Sem nome')+'</h2><p>'+esc(fmtDate(set.date))+' · '+esc(setSummary(set))+'</p></div>';
+  if(ids.length){
+    h+='<ol class="setlist">'+ids.map(function(sid,i){
+      var s=S.songs[sid],right;
+      if(S.setEdit){
+        right='<span class="sl-ctl"><button data-act="mv" data-id="'+sid+'" data-d="-1" aria-label="Subir"'+(i===0?' disabled':'')+'>▲</button>'+
+          '<button data-act="mv" data-id="'+sid+'" data-d="1" aria-label="Descer"'+(i===ids.length-1?' disabled':'')+'>▼</button>'+
+          '<button class="rm" data-act="rm" data-id="'+sid+'" aria-label="Tirar do repertório">✕</button></span>';
+      }else{
+        right='<span class="sl-info">'+(s.key?'<span class="tag key">'+esc(s.key)+'</span>':'<span class="tag empty">tom</span>')+
+          ((+s.bpm>0)?'<span class="tag mono">'+(+s.bpm)+'</span>':'')+'</span>';
+      }
+      return '<li><span class="n">'+(i+1)+'</span><span class="sl-main"><b>'+esc(s.title)+'</b><span>'+esc(s.artist)+(VOICE[s.voice]?' · '+VOICE[s.voice]:'')+'</span></span>'+right+'</li>';
+    }).join('')+'</ol>';
+  }else{
+    h+='<div class="empty"><b>Este repertório está vazio.</b><span>Toque em Adicionar músicas. As mais votadas aparecem primeiro.</span></div>';
+  }
+  h+='<div class="stack"><button class="btn primary block" data-act="add-songs"'+(S.readOnly?' disabled':'')+'>Adicionar músicas</button>';
+  if(ids.length)h+='<button class="btn block'+(S.setEdit?' on':'')+'" data-act="toggle-set-edit">'+(S.setEdit?'Concluir ordem':'Mudar ordem ou tirar músicas')+'</button>';
+  if(!(S.setForm&&S.setForm.id===id))h+='<button class="btn block" data-act="edit-set">Editar nome e data</button>';
+  if(S.confirmDel)h+='<div class="form"><b>Excluir este repertório de vez?</b><div class="row"><button class="btn" data-act="cancel-del">Cancelar</button><button class="btn danger" data-act="del-set">Excluir</button></div></div>';
+  else h+='<button class="btn block danger" data-act="ask-del">Excluir repertório</button>';
+  return h+'</div>';
+}
+
+/* ---------- sheets ---------- */
+function openSheet(sh){S.sheet=sh;document.documentElement.classList.add('locked');refreshSheet(true)}
+function closeSheet(){S.sheet=null;document.documentElement.classList.remove('locked');$('#sheet').hidden=true;$('#sheet').innerHTML='';refresh()}
+function refreshSheet(force){
+  var el=$('#sheet');
+  if(!S.sheet){if(!el.hidden){el.hidden=true;el.innerHTML=''}return}
+  if(S.sheet.type==='song'){
+    var ae=document.activeElement;
+    if(!force&&ae&&ae.id==='bpm-input')return;
+    if(!S.songs[S.sheet.id]){closeSheet();return}
+    var panel=$('.panel',el),top=panel?panel.scrollTop:0;
+    el.innerHTML=songSheetHTML(S.sheet.id);el.hidden=false;
+    panel=$('.panel',el);if(panel)panel.scrollTop=top;
+  }else{
+    var set=S.sets[S.sheet.setId];
+    if(!set){closeSheet();return}
+    if(!S.sheet.built){
+      el.innerHTML='<div class="panel tall" role="dialog" aria-modal="true" aria-label="Adicionar músicas"><div class="sheet-head"><div><h2>Adicionar músicas</h2><p id="pcount"></p></div>'+
+        '<button class="btn primary" data-act="close-sheet">Concluir</button></div>'+
+        '<label class="search"><span class="sr">Buscar</span><input id="pq" type="search" placeholder="Buscar música ou artista" autocomplete="off"></label>'+
+        '<div class="plist" id="plist"></div></div>';
+      el.hidden=false;S.sheet.built=true;
+    }
+    var inSet={};setSongs(set).forEach(function(id){inSet[id]=true});
+    var q=norm(S.sheet.q||'');
+    var rows=songIds().filter(function(id){var s=S.songs[id];return !q||norm(s.title+' '+s.artist).indexOf(q)>=0})
+      .map(function(id){return {id:id,total:stats(id).total}});
+    rows.sort(function(a,b){
+      if(b.total!==a.total)return b.total-a.total;
+      var x=sortKey(S.songs[a.id].title),y=sortKey(S.songs[b.id].title);return x<y?-1:x>y?1:0;
+    });
+    $('#pcount').textContent=(set.name||'Sem nome')+' · '+Object.keys(inSet).length+' no repertório';
+    $('#plist').innerHTML=rows.length?rows.map(function(r){
+      var s=S.songs[r.id],on=!!inSet[r.id];
+      return '<button class="prow'+(on?' in':'')+'" data-act="pick" data-id="'+r.id+'" aria-pressed="'+on+'"><span class="ck" aria-hidden="true">✓</span>'+
+        '<span class="rmain"><span class="s-title">'+esc(s.title)+'</span><span class="s-artist">'+esc(s.artist)+(s.key?' · '+esc(s.key):'')+'</span></span>'+
+        '<span class="ptot">'+r.total+STAR+'</span></button>';
+    }).join(''):'<div class="empty">Nenhuma música com essa busca.</div>';
+  }
+}
+function pickBtn(act,v,label,on,extra){
+  return '<button class="pick'+(on?' on':'')+(extra||'')+'" data-act="'+act+'" data-v="'+esc(v)+'" aria-pressed="'+!!on+'">'+esc(label)+'</button>';
+}
+function songSheetHTML(id){
+  var s=S.songs[id],k=parseKey(s.key),ro=S.readOnly?' disabled':'';
+  var h='<div class="panel" role="dialog" aria-modal="true" aria-label="'+esc(s.title)+'"><div class="sheet-head"><div><h2>'+esc(s.title)+'</h2><p>'+esc(s.artist)+'</p></div>'+
+    '<button class="x" data-act="close-sheet" aria-label="Fechar">✕</button></div>';
+  h+='<section class="sec"><h3>Votos</h3>';
+  MEMBERS.forEach(function(m){
+    var v=getVote(m.id,id);
+    if(m.id===S.me)h+='<div class="vrow"><b>'+esc(m.name)+' (você)</b>'+starsHTML(id,v,true)+'</div>';
+    else h+='<div class="vrow"><span>'+esc(m.name)+'</span>'+(v==null?'<span class="dim">ainda não votou</span>':(v===0?'<span class="dim">0 estrelas</span>':miniStars(v)))+'</div>';
+  });
+  h+='</section>';
+  h+='<section class="sec"><h3>Tom da banda <b>'+(s.key?esc(s.key):'–')+'</b></h3><div class="notes">'+
+    ['C','D','E','F','G','A','B'].map(function(n){return pickBtn('key-note',n,n,k.note===n)}).join('')+'</div>'+
+    '<div class="grid2">'+pickBtn('key-acc','#','♯ sustenido',k.acc==='#',' txt')+pickBtn('key-acc','b','♭ bemol',k.acc==='b',' txt')+'</div>'+
+    '<div class="grid2">'+pickBtn('key-mode','M','Maior',!!k.note&&k.mode==='',' txt')+pickBtn('key-mode','m','Menor',k.mode==='m',' txt')+'</div>'+
+    (s.key?'<button class="link" data-act="key-clear">Tirar o tom</button>':'')+'</section>';
+  h+='<section class="sec"><h3>BPM</h3><div class="stepper">'+
+    '<button class="pick" data-act="bpm-step" data-d="-5">−5</button><button class="pick" data-act="bpm-step" data-d="-1">−1</button>'+
+    '<input id="bpm-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" aria-label="BPM" placeholder="–" value="'+((+s.bpm>0)?+s.bpm:'')+'"'+ro+'>'+
+    '<button class="pick" data-act="bpm-step" data-d="1">+1</button><button class="pick" data-act="bpm-step" data-d="5">+5</button></div></section>';
+  h+='<section class="sec"><h3>Voz</h3><div class="grid3">'+pickBtn('set-voice','H','H',s.voice==='H')+pickBtn('set-voice','M','M',s.voice==='M')+pickBtn('set-voice','HM','H+M',s.voice==='HM')+'</div></section>';
+  h+='<section class="sec"><h3>Origem</h3><div class="grid2">'+pickBtn('set-origin','Nac','Nacional',s.origin==='Nac',' txt')+pickBtn('set-origin','Int','Internacional',s.origin==='Int',' txt')+'</div></section>';
+  h+='<section class="sec"><h3>Gênero</h3><div class="chips">'+GENRES.map(function(g){
+    return '<button class="chip'+(s.genre===g?' on':'')+'" data-act="set-genre" data-v="'+esc(g)+'" aria-pressed="'+(s.genre===g)+'">'+esc(g)+'</button>';
+  }).join('')+'</div></section>';
+  h+='<section class="sec"><h3>Duração</h3><div class="stepper three"><button class="pick" data-act="dur-step" data-d="-15">−15 s</button>'+
+    '<output>'+((+s.dur>0)?fmtDur(+s.dur):'–')+'</output><button class="pick" data-act="dur-step" data-d="15">+15 s</button></div>'+
+    ((+s.dur>0)?'<button class="link" data-act="dur-clear">Tirar a duração</button>':'')+'</section>';
+  return h+'</div>';
+}
+
+/* ---------- top-level render ---------- */
+function renderBanner(){
+  var b=$('#banner');
+  if(S.readOnly){b.hidden=false;$('#banner-text').textContent='O banco de dados recusou a gravação. Avise o Jorge.'}
+  else b.hidden=true;
+}
+function mount(force){
+  if(mounted===S.tab&&!force)return;
+  mounted=S.tab;
+  if(S.tab==='biblioteca')mountLib();else if(S.tab==='ranking')mountRank();else $('#view').innerHTML='';
+}
+function refresh(){
+  var gate=!S.word,login=!gate&&!S.me;
+  $('#login').hidden=!(gate||login);$('#app').hidden=gate||login;
+  if(gate){if(mounted!=='gate'){mounted='gate';renderGate()}return}
+  if(login){mounted=null;renderLogin();return}
+  $('#who').textContent=memberName(S.me);
+  document.querySelectorAll('.tab').forEach(function(b){b.setAttribute('aria-current',b.dataset.tab===S.tab?'page':'false')});
+  renderBanner();mount(false);
+  if(S.tab==='biblioteca')refreshLib();else if(S.tab==='ranking')refreshRank();else refreshSets(false);
+  refreshSheet(false);
+}
+
+/* ---------- actions ---------- */
+function patchSong(id,fields,delay){patchDoc('lib/songs',{songs:(function(){var o={};o[id]=fields;return o})()},delay)}
+function guard(){if(S.readOnly){toast('Você está só com leitura.');return false}if(!S.db){toast('Os dados ainda não abriram.');return false}return true}
+function clamp(n,a,b){return Math.max(a,Math.min(b,n))}
+
+var ACT={
+  'enter-word':function(){
+    if(S.busy)return;
+    var w=norm($('#word').value).replace(/[^a-z0-9]/g,'');
+    function say(msg,miss){S.gate={msg:msg,miss:miss||'',confirm:false};gateMsg()}
+    if(w.length<4){say('A palavra precisa ter pelo menos 4 letras ou números.');return}
+    if(!initDb()){say('Não deu para conectar. Confira a internet e tente de novo.');return}
+    S.busy=true;say('Conferindo…');
+    S.db.doc('bands/'+w+'/lib/songs').get().then(function(s){
+      S.busy=false;
+      if(s.exists)enterBand(w);else say('Não achei a banda com essa palavra.',w);
+    },function(){S.busy=false;say('Não deu para conectar. Confira a internet e tente de novo.')});
+  },
+  'create-ask':function(){S.gate.confirm=true;gateMsg()},
+  'create-lib':function(){
+    if(S.busy||!S.gate.miss)return;
+    var w=S.gate.miss,base='bands/'+w+'/',seed;
+    try{seed=JSON.parse($('#seed').textContent)}catch(e){seed={songs:{}}}
+    S.busy=true;S.gate={msg:'Criando a biblioteca…',miss:'',confirm:false};gateMsg();
+    var chain=S.db.doc(base+'lib/songs').set(seed);
+    MEMBERS.forEach(function(m){chain=chain.then(function(){return S.db.doc(base+'votes/'+m.id).set({v:{}})})});
+    chain.then(function(){S.busy=false;enterBand(w)},function(){
+      S.busy=false;S.gate={msg:'Não deu para criar. Confira as regras do banco de dados.',miss:w,confirm:false};gateMsg();
+    });
+  },
+  'forget-word':function(){S.word=null;store.del('banda.word');disconnect();S.gate={msg:'',miss:'',confirm:false};mounted=null;refresh();window.scrollTo(0,0)},
+  login:function(d){S.me=d.id;store.set('banda.me',d.id);refresh();window.scrollTo(0,0)},
+  'switch-user':function(){S.me=null;store.del('banda.me');S.stick={};refresh();window.scrollTo(0,0)},
+  tab:function(d){
+    if(TABS.indexOf(d.tab)<0)return;
+    S.tab=d.tab;store.set('banda.tab',S.tab);S.stick={};
+    try{history.replaceState(null,'','#'+S.tab)}catch(e){}
+    refresh();window.scrollTo(0,0);
+  },
+  'toggle-filters':function(){S.showFilters=!S.showFilters;refreshLib()},
+  filt:function(d){
+    var k=d.k;
+    if(typeof S.f[k]==='boolean')S.f[k]=!S.f[k];else S.f[k]=S.f[k]===d.v?'':d.v;
+    S.stick={};refreshLib();
+  },
+  'clear-filters':function(){S.f={origin:'',voice:'',genre:'',novote:false,nokey:false};S.q='';S.stick={};var q=$('#q');if(q)q.value='';refreshLib()},
+  sort:function(d){S.sort=d.v==='artist'?'artist':'title';refreshLib()},
+  'rank-origin':function(d){S.rankOrigin=d.v||'';refreshRank()},
+  vote:function(d){
+    if(!guard())return;
+    var n=+d.n,cur=getVote(S.me,d.id),o={};
+    o[d.id]=(cur===n)?-1:n;
+    if(S.f.novote)S.stick[d.id]=true;
+    patchDoc('votes/'+S.me,{v:o},350);
+  },
+  'open-song':function(d){if(S.songs[d.id])openSheet({type:'song',id:d.id})},
+  'close-sheet':function(){closeSheet()},
+  'key-note':function(d){if(!guard())return;var id=S.sheet.id,k=parseKey(S.songs[id].key);patchSong(id,{key:d.v+k.mode});refreshSheet(true)},
+  'key-acc':function(d){
+    if(!guard())return;var id=S.sheet.id,k=parseKey(S.songs[id].key);
+    if(!k.note){toast('Escolha a nota primeiro.');return}
+    patchSong(id,{key:k.note+(k.acc===d.v?'':d.v)+k.mode});refreshSheet(true);
+  },
+  'key-mode':function(d){
+    if(!guard())return;var id=S.sheet.id,k=parseKey(S.songs[id].key);
+    if(!k.note){toast('Escolha a nota primeiro.');return}
+    patchSong(id,{key:k.note+k.acc+(d.v==='m'?'m':'')});refreshSheet(true);
+  },
+  'key-clear':function(){if(!guard())return;patchSong(S.sheet.id,{key:''});refreshSheet(true)},
+  'bpm-step':function(d){
+    if(!guard())return;var id=S.sheet.id,cur=+S.songs[id].bpm||0;
+    patchSong(id,{bpm:cur>0?clamp(cur+(+d.d),30,300):100},500);refreshSheet(true);
+  },
+  'set-voice':function(d){if(!guard())return;var id=S.sheet.id;patchSong(id,{voice:S.songs[id].voice===d.v?'':d.v});refreshSheet(true)},
+  'set-origin':function(d){if(!guard())return;patchSong(S.sheet.id,{origin:d.v});refreshSheet(true)},
+  'set-genre':function(d){if(!guard())return;patchSong(S.sheet.id,{genre:d.v});refreshSheet(true)},
+  'dur-step':function(d){
+    if(!guard())return;var id=S.sheet.id,cur=+S.songs[id].dur||0;
+    patchSong(id,{dur:cur>0?clamp(cur+(+d.d),30,900):210},500);refreshSheet(true);
+  },
+  'dur-clear':function(){if(!guard())return;patchSong(S.sheet.id,{dur:0});refreshSheet(true)},
+
+  'new-set':function(){if(!guard())return;S.setForm={id:null,name:'',date:''};refreshSets(true);var i=$('#set-name');if(i)i.focus()},
+  'edit-set':function(){if(!guard())return;var s=S.sets[S.openSet];S.setForm={id:S.openSet,name:s.name||'',date:s.date||''};refreshSets(true)},
+  'cancel-set-form':function(){S.setForm=null;refreshSets(true)},
+  'save-set-form':function(){
+    if(!guard()||S.busy)return;
+    var name=($('#set-name').value||'').trim(),date=$('#set-date').value||'';
+    if(!name){toast('Dê um nome ao repertório.');return}
+    if(S.setForm.id){
+      var id=S.setForm.id;S.setForm=null;
+      patchDoc('setlists/'+id,{name:name,date:date},0);refreshSets(true);
+      return;
+    }
+    S.busy=true;S.setForm.name=name;S.setForm.date=date;refreshSets(true);
+    S.db.collection(P('setlists')).add({name:name,date:date,songs:[],by:S.me,ts:Date.now()}).then(function(ref){
+      S.busy=false;S.setForm=null;
+      setIds[ref.id]=true;if(!raw['setlists/'+ref.id])raw['setlists/'+ref.id]={name:name,date:date,songs:[],by:S.me};
+      S.openSet=ref.id;derive();refreshSets(true);window.scrollTo(0,0);
+    },function(e){S.busy=false;fail(e);refreshSets(true)});
+  },
+  'open-set':function(d){S.openSet=d.id;S.setEdit=false;S.confirmDel=false;S.setForm=null;refreshSets(true);window.scrollTo(0,0)},
+  'back-sets':function(){S.openSet=null;S.setEdit=false;S.confirmDel=false;S.setForm=null;refreshSets(true);window.scrollTo(0,0)},
+  'toggle-set-edit':function(){S.setEdit=!S.setEdit;refreshSets(true)},
+  'add-songs':function(){if(!guard())return;openSheet({type:'picker',setId:S.openSet,q:'',built:false})},
+  pick:function(d){
+    if(!guard())return;var sid=S.sheet.setId,set=S.sets[sid];if(!set)return;
+    var arr=setSongs(set).slice(),i=arr.indexOf(d.id);
+    if(i>=0)arr.splice(i,1);else arr.push(d.id);
+    patchDoc('setlists/'+sid,{songs:arr},500);
+  },
+  mv:function(d){
+    if(!guard())return;var set=S.sets[S.openSet];if(!set)return;
+    var arr=setSongs(set).slice(),i=arr.indexOf(d.id),j=i+(+d.d);
+    if(i<0||j<0||j>=arr.length)return;
+    var t=arr[i];arr[i]=arr[j];arr[j]=t;
+    patchDoc('setlists/'+S.openSet,{songs:arr},600);
+  },
+  rm:function(d){
+    if(!guard())return;var set=S.sets[S.openSet];if(!set)return;
+    var arr=setSongs(set).filter(function(x){return x!==d.id});
+    patchDoc('setlists/'+S.openSet,{songs:arr},600);
+  },
+  'ask-del':function(){if(!guard())return;S.confirmDel=true;refreshSets(true)},
+  'cancel-del':function(){S.confirmDel=false;refreshSets(true)},
+  'del-set':function(){
+    if(!guard()||S.busy)return;var id=S.openSet,path='setlists/'+id;
+    S.busy=true;
+    if(pend[path]){clearTimeout(pend[path].timer);delete pend[path]}
+    S.db.doc(P(path)).delete().then(function(){
+      S.busy=false;delete setIds[id];delete raw[path];S.openSet=null;S.confirmDel=false;S.setEdit=false;
+      derive();refreshSets(true);toast('Repertório excluído.');
+    },function(e){S.busy=false;fail(e)});
+  }
+};
+
+document.addEventListener('click',function(e){
+  var t=e.target;
+  if(t&&t.id==='sheet'){closeSheet();return}
+  var el=t&&t.closest?t.closest('[data-act]'):null;
+  if(!el||el.disabled)return;
+  var fn=ACT[el.dataset.act];
+  if(fn)fn(el.dataset,el);
+});
+document.addEventListener('input',function(e){
+  var t=e.target;
+  if(t.id==='q'){S.q=t.value;S.stick={};refreshLib()}
+  else if(t.id==='pq'&&S.sheet&&S.sheet.type==='picker'){S.sheet.q=t.value;refreshSheet(false)}
+  else if(t.id==='bpm-input'&&S.sheet&&S.sheet.type==='song'){
+    if(S.readOnly||!S.db)return;
+    var raw_=t.value.replace(/\D/g,'');if(raw_!==t.value)t.value=raw_;
+    var n=parseInt(raw_,10);
+    if(!raw_)patchSong(S.sheet.id,{bpm:0},700);
+    else if(n>=30&&n<=300)patchSong(S.sheet.id,{bpm:n},700);
+  }
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'&&S.sheet)closeSheet();
+  if(e.key==='Enter'&&e.target&&e.target.id==='word'){e.preventDefault();ACT['enter-word']()}
+  if(e.key==='Enter'&&e.target&&(e.target.id==='set-name'||e.target.id==='set-date')){e.preventDefault();ACT['save-set-form']()}
+});
+
+/* ---------- start ---------- */
+var saved=store.get('banda.me');
+if(saved&&memberName(saved))S.me=saved;
+var h=(location.hash||'').replace('#',''),st=store.get('banda.tab');
+if(TABS.indexOf(h)>=0)S.tab=h;else if(TABS.indexOf(st)>=0)S.tab=st;
+var sw=store.get('banda.word');
+if(sw&&/^[a-z0-9]{4,40}$/.test(sw)){S.word=sw;connect()}else refresh();
+})();
+</script>
+</body>
+</html>
